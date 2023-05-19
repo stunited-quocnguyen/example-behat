@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+    nginx:
+        image: nginx:latest
+        ports:
+            - "8000:80"
+        volumes:
+            - .:/var/www/html
+            - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+        depends_on:
+            - php
+
+    php:
+        build:
+            context: ./
+            dockerfile: ./docker/Dockerfile
+        volumes:
+            - ./:/var/www/html/
+        depends_on:
+            - sql
+
+    sql:
+        image: mysql:latest
+        platform: linux/x86_64
+        environment:
+            MYSQL_DATABASE: laravel
+            MYSQL_ROOT_PASSWORD: secret
+            MYSQL_USER: laravel
+            MYSQL_PASSWORD: secret
+        ports:
+            - 3306:3306
